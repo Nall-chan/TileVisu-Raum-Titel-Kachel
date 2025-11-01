@@ -170,7 +170,9 @@ class TileVisuRoomHeaderTile extends IPSModule
         }
 
         // Schicke eine komplette Update-Nachricht an die Darstellung, da sich ja Parameter geändert haben können
-        $this->UpdateVisualizationValue($this->GetFullUpdateMessage());
+        // Aber in einem eigenen Script Thread, da sonst ApplyChanges blockiert wird und auch die Konsole hängt.
+        IPS_RunScriptText('RMH_ForceUpdate('.$this->InstanceID.');');
+        
     }
 
     public function MessageSink($TimeStamp, $SenderID, $Message, $Data)
@@ -266,6 +268,10 @@ class TileVisuRoomHeaderTile extends IPSModule
 		return json_encode($Form);
 	}
 
+    public function ForceUpdate()
+    {
+        $this->UpdateVisualizationValue($this->GetFullUpdateMessage());
+    }
 
     // Generiere eine Nachricht, die alle Elemente in der HTML-Darstellung aktualisiert
     private function GetFullUpdateMessage() {
@@ -467,4 +473,3 @@ class TileVisuRoomHeaderTile extends IPSModule
     }
 
 }
-?>
